@@ -1497,20 +1497,19 @@ struct KKSectionMetrics {
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath
 {
     if (_selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem && indexPath.index != NSNotFound && indexPath.section != NSNotFound) {
-        KKIndexPath *redirectedPath = [self.delegate gridView:self willDeselectItemAtIndexPath:indexPath];
-        if (redirectedPath != nil && ![redirectedPath isEqual:indexPath]) {
-            indexPath = redirectedPath;
+        indexPath = [self.delegate gridView:self willDeselectItemAtIndexPath:indexPath];
+    }
+
+    if (indexPath) {
+        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+        if ([_selectedIndexPaths containsObject:indexPath]) {
+            [_selectedIndexPaths removeObject:indexPath];
+            cell.selected = NO;
         }
-    }
-    
-    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-    if ([_selectedIndexPaths containsObject:indexPath]) {
-        [_selectedIndexPaths removeObject:indexPath];
-        cell.selected = NO;
-    }
-    
-    if (_delegateRespondsTo.didDeselectItem) {
-        [self.delegate gridView:self didDeselectItemAtIndexPath:indexPath];
+
+        if (_delegateRespondsTo.didDeselectItem) {
+            [self.delegate gridView:self didDeselectItemAtIndexPath:indexPath];
+        }
     }
 }
 
