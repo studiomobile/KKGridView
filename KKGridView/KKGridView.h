@@ -118,8 +118,11 @@ typedef enum {
 #pragma mark - Selection
 
 - (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
+- (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated ignoreDelegate:(BOOL)ignoreDelegate;
 - (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
-- (void)deselectAll: (BOOL)animated;
+- (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated ignoreDelegate:(BOOL)ignoreDelegate;
+- (void)deselectAll:(BOOL)animated;
+- (void)deselectAll:(BOOL)animated ignoreDelegate:(BOOL)ignoreDelegate;
 - (NSUInteger)selectedItemCount;
 
 - (KKIndexPath *)indexPathForSelectedCell;

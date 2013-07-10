@@ -133,7 +133,9 @@ struct KKSectionMetrics {
 + (void)animateIf:(BOOL)animated delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options block:(void(^)())block;
 @end
 
-@implementation KKGridView
+@implementation KKGridView {
+    BOOL _ignoreDelegate;
+}
 
 @synthesize batchUpdating = _batchUpdating;
 @synthesize dataSource = _dataSource;
@@ -1388,33 +1390,54 @@ struct KKSectionMetrics {
 
 - (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
 {
+    [self selectItemsAtIndexPaths:indexPaths animated:animated ignoreDelegate:NO];
+}
+
+- (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated ignoreDelegate:(BOOL)ignoreDelegate
+{
     if (!indexPaths)
         return;
     
+    _ignoreDelegate = ignoreDelegate;
     [KKGridView animateIf:animated delay:0.f options:0 block:^{
         for (KKIndexPath *indexPath in indexPaths) {
             [self _selectItemAtIndexPath:indexPath];
         }
     }];
+    _ignoreDelegate = NO;
 }
 
 - (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
 {
+    [self deselectItemsAtIndexPaths:indexPaths animated:animated ignoreDelegate:NO];
+}
+
+- (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated ignoreDelegate:(BOOL)ignoreDelegate
+{
     if (!indexPaths)
         return;
-    
+
+    _ignoreDelegate = ignoreDelegate;
     [KKGridView animateIf:animated delay:0.f options:0 block:^{
         for (KKIndexPath *indexPath in indexPaths) {
             [self _deselectItemAtIndexPath:indexPath];
         }
     }];
+    _ignoreDelegate = NO;
 }
 
 - (void)deselectAll:(BOOL)animated
 {
+    [self deselectAll:animated ignoreDelegate:NO];
+}
+
+- (void)deselectAll:(BOOL)animated ignoreDelegate:(BOOL)ignoreDelegate
+{
+    _ignoreDelegate = ignoreDelegate;
     [KKGridView animateIf:animated delay:0.f options:0 block:^{
         [self _deselectAll];
     }];
+    _ignoreDelegate = NO;
 }
 
 - (KKIndexPath*)indexPathForSelectedCell
@@ -1472,7 +1495,7 @@ struct KKSectionMetrics {
         cell.selected = YES;
     }
     
-    if (_delegateRespondsTo.didSelectItem) {
+    if (_delegateRespondsTo.didSelectItem && !_ignoreDelegate) {
         [self.delegate gridView:self didSelectItemAtIndexPath:indexPath];
     }
 }
@@ -1485,7 +1508,7 @@ struct KKSectionMetrics {
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
         cell.selected = NO;
         
-        if(_delegateRespondsTo.willDeselectItem)
+        if(_delegateRespondsTo.willDeselectItem && !_ignoreDelegate)
         {
             [self.delegate gridView:self willDeselectItemAtIndexPath:indexPath];
         }
@@ -1496,7 +1519,7 @@ struct KKSectionMetrics {
 
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-    if (_selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem && indexPath.index != NSNotFound && indexPath.section != NSNotFound) {
+    if (_selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem && !_ignoreDelegate && indexPath.index != NSNotFound && indexPath.section != NSNotFound) {
         indexPath = [self.delegate gridView:self willDeselectItemAtIndexPath:indexPath];
     }
 
@@ -1507,7 +1530,7 @@ struct KKSectionMetrics {
             cell.selected = NO;
         }
 
-        if (_delegateRespondsTo.didDeselectItem) {
+        if (_delegateRespondsTo.didDeselectItem && !_ignoreDelegate) {
             [self.delegate gridView:self didDeselectItemAtIndexPath:indexPath];
         }
     }
