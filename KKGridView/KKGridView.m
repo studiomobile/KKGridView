@@ -1549,10 +1549,11 @@ struct KKSectionMetrics {
         [self _cancelHighlighting];
         return;
     }
-    
-    if (state == UIGestureRecognizerStateEnded && _delegateRespondsTo.willSelectItem && ![self isDragging])
+
+    if (state == UIGestureRecognizerStateEnded && _delegateRespondsTo.willSelectItem && ![self isDragging]
+            && ![_selectedIndexPaths containsObject:indexPath])
         indexPath = [self.delegate gridView:self willSelectItemAtIndexPath:indexPath];
-    
+
     // The delegate may have returned a nil index path to cancel the selection.
     if (!indexPath) {
         [self _cancelHighlighting];
