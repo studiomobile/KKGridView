@@ -1,11 +1,16 @@
-*.xcodeproj/*.pbxuser
-*.xcodeproj/*.perspectivev3
-*.xcodeproj/xcuserdata/
-*.xcodeproj/project.xcworkspace/xcuserdata/
-*.xcuserstate
-Examples/*/*.xcodeproj/xcuserdata
-build/
+# xcode noise
+DerivedData
+xcuserdata
+project.xcworkspace
+build/*
+
+# osx noise
 .DS_Store
+
+# appcode
+.idea
+
+Examples/*/*.xcodeproj/xcuserdata
 Examples/GridViewDemo/GridViewDemo.xcodeproj/project.xcworkspace/contents.xcworkspacedata
 *.xcuserdatad
 Examples/FeatureDemo/FeatureDemo/FeatureDemo.xcodeproj/project.xcworkspace/contents.xcworkspacedata
